@@ -4,7 +4,7 @@
   * @author  Jose Pablo Castro Valverde
   * @email   josepablo.castro@gmail.com
   * @version V1.0
-  * @date    08-10-2015
+  * @date    10-10-2015
   * @brief   This file provides the HT6022BL firmware         
   ******************************************************************************
   */
