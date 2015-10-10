@@ -26,6 +26,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include <stdlib.h>
 #include "HT6022.h"
+#include "HT6022BLfw.h"
 #include "HT6022fw.h"
 #include <stdio.h>
 
@@ -38,38 +39,39 @@
   */ 
 
 /* Private define ------------------------------------------------------------*/
-#define HT6022_VENDOR_ID          0X4B5
-#define HT6022_MODEL              0X6022
-#define HT6022_IR1_REQUEST_TYPE 0X40
-#define HT6022_IR1_REQUEST      0XE0
-#define HT6022_IR1_VALUE        0X00
-#define HT6022_IR1_INDEX        0X00
-#define HT6022_IR1_SIZE         0X01
-#define HT6022_IR2_REQUEST_TYPE 0X40
-#define HT6022_IR2_REQUEST      0XE1
-#define HT6022_IR2_VALUE        0X00
-#define HT6022_IR2_INDEX        0X00
-#define HT6022_IR2_SIZE         0X01
-#define HT6022_SR_REQUEST_TYPE   0X40
-#define HT6022_SR_REQUEST        0XE2
-#define HT6022_SR_VALUE          0X00
-#define HT6022_SR_INDEX          0X00
-#define HT6022_SR_SIZE           0X01
-#define HT6022_SETCALLEVEL_REQUEST_TYPE   0XC0
-#define HT6022_SETCALLEVEL_REQUEST        0XA2
-#define HT6022_SETCALLEVEL_VALUE          0X08
-#define HT6022_SETCALLEVEL_INDEX          0X00
-#define HT6022_GETCALLEVEL_REQUEST_TYPE   0X40
-#define HT6022_GETCALLEVEL_REQUEST        0XA2
-#define HT6022_GETCALLEVEL_VALUE          0X08
-#define HT6022_GETCALLEVEL_INDEX          0X00
-#define HT6022_READ_CONTROL_REQUEST_TYPE  0X40
-#define HT6022_READ_CONTROL_REQUEST       0XE3
-#define HT6022_READ_CONTROL_VALUE 	  0X00
-#define HT6022_READ_CONTROL_INDEX         0X00
-#define HT6022_READ_CONTROL_SIZE          0X01
-#define HT6022_READ_CONTROL_DATA          0X01
-#define HT6022_READ_BULK_PIPE             0X86
+#define HT6022_VENDOR_ID                    0X4B5
+#define HT6022_MODEL                        0X6022
+#define HT6022BL_MODEL                      0X602A
+#define HT6022_IR1_REQUEST_TYPE             0X40
+#define HT6022_IR1_REQUEST                  0XE0
+#define HT6022_IR1_VALUE                    0X00
+#define HT6022_IR1_INDEX                    0X00
+#define HT6022_IR1_SIZE                     0X01
+#define HT6022_IR2_REQUEST_TYPE             0X40
+#define HT6022_IR2_REQUEST                  0XE1
+#define HT6022_IR2_VALUE                    0X00
+#define HT6022_IR2_INDEX                    0X00
+#define HT6022_IR2_SIZE                     0X01
+#define HT6022_SR_REQUEST_TYPE              0X40
+#define HT6022_SR_REQUEST                   0XE2
+#define HT6022_SR_VALUE                     0X00
+#define HT6022_SR_INDEX                     0X00
+#define HT6022_SR_SIZE                      0X01
+#define HT6022_SETCALLEVEL_REQUEST_TYPE     0XC0
+#define HT6022_SETCALLEVEL_REQUEST          0XA2
+#define HT6022_SETCALLEVEL_VALUE            0X08
+#define HT6022_SETCALLEVEL_INDEX            0X00
+#define HT6022_GETCALLEVEL_REQUEST_TYPE     0X40
+#define HT6022_GETCALLEVEL_REQUEST          0XA2
+#define HT6022_GETCALLEVEL_VALUE            0X08
+#define HT6022_GETCALLEVEL_INDEX            0X00
+#define HT6022_READ_CONTROL_REQUEST_TYPE    0X40
+#define HT6022_READ_CONTROL_REQUEST         0XE3
+#define HT6022_READ_CONTROL_VALUE           0X00
+#define HT6022_READ_CONTROL_INDEX           0X00
+#define HT6022_READ_CONTROL_SIZE            0X01
+#define HT6022_READ_CONTROL_DATA            0X01
+#define HT6022_READ_BULK_PIPE               0X86
 
 
 /* Private macro -------------------------------------------------------------*/
