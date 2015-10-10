@@ -26,14 +26,14 @@ COBJ   = $(SRC:.c=.o)
 all: $(EXEC)
 
 $(EXEC):$(COBJ)
-	@echo lincando
+	@echo linking
 	@$(CC) $(COBJ) $(LDFLAGS) -o $(EXEC)
 
 $(COBJ): %.o : %.c
-	@echo Compilando $<
+	@echo Compiling $<
 	@$(CC) $(CFLAGS) $(SHDIR) -c $< -o $@
 
 clean:
-	@echo removendo arquivos .o e .out
+	@echo removing files .o e .out
 	@rm -f $(COBJ)
 	@rm -f $(EXEC)
