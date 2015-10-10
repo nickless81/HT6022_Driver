@@ -148,7 +148,8 @@ HT6022_ErrorTypeDef	HT6022_Init (void);
 void HT6022_Exit (void);
 HT6022_ErrorTypeDef	HT6022_DeviceOpen (HT6022_DeviceTypeDef *Device);
 void HT6022_DeviceClose (HT6022_DeviceTypeDef *Device);
-HT6022_ErrorTypeDef HT6022_FirmwareUpload (void); 
+HT6022_ErrorTypeDef HT6022_FirmwareUpload (void);
+HT6022_ErrorTypeDef HT6022BL_FirmwareUpload (void);
 /* Read functions ********************************************************/
 HT6022_ErrorTypeDef	HT6022_ReadData (HT6022_DeviceTypeDef *Device,
 									 unsigned char* CH1, unsigned char* CH2,

@@ -208,6 +208,62 @@ HT6022_ErrorTypeDef HT6022_FirmwareUpload (void)
 }
 
 /**
+  * @brief  This function uploads the HT6022BL firmware.
+  * @param  None
+  * @retval Error Code. See HT6022_ErrorTypeDef
+  */
+HT6022_ErrorTypeDef HT6022BL_FirmwareUpload (void)
+{
+	libusb_device_handle  *Dev_handle;
+	unsigned char* Firmware;
+	unsigned int Size;
+	unsigned int Value;
+	int n;
+	Dev_handle = libusb_open_device_with_vid_pid(NULL, HT6022BL_FIRMWARE_VENDOR_ID, HT6022BL_MODEL);
+	if (Dev_handle == 0){
+ 		return HT6022_ERROR_NO_DEVICE;
+	}
+	if(libusb_kernel_driver_active(Dev_handle, 0) == 1)
+		if(libusb_detach_kernel_driver(Dev_handle, 0) != 0)
+		{
+			libusb_close(Dev_handle);
+			return HT6022_ERROR_OTHER;
+		}
+
+	if(libusb_claim_interface(Dev_handle, 0) < 0)
+	{
+		libusb_close(Dev_handle);
+		return HT6022_ERROR_OTHER;
+	}
+
+	n = HT6022BL_FIRMWARE_SIZE;
+	Firmware = HT6022BL_Firmware;
+	while (n)
+	{	
+		Size  = *Firmware + ((*(Firmware + 1))<<0x08);
+		Firmware = Firmware + 2;
+		Value = *Firmware + ((*(Firmware + 1))<<0x08);
+		Firmware = Firmware + 2;
+		if (libusb_control_transfer (	Dev_handle,
+										HT6022BL_FIRMWARE_REQUEST_TYPE,               
+                                     	HT6022BL_FIRMWARE_REQUEST, 
+										Value,           
+										HT6022BL_FIRMWARE_INDEX, 
+										Firmware, Size, 0) != Size)
+		{
+			libusb_release_interface(Dev_handle, 0);
+			libusb_close(Dev_handle);
+			return HT6022_ERROR_OTHER;
+		}
+		Firmware = Firmware + Size;
+		n--;
+	}
+	libusb_release_interface(Dev_handle, 0);
+	libusb_close(Dev_handle);
+	return HT6022_SUCCESS;
+}
+
+/**
   * @brief  ---
   * @param  ---
   * @retval Error Code. See HT6022_ErrorTypeDef
