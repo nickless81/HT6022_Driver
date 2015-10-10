@@ -32,8 +32,8 @@
   */
 typedef struct 
 {
-	libusb_device_handle *DeviceHandle;
-	unsigned char Address;
+    libusb_device_handle *DeviceHandle;
+    unsigned char Address;
 }HT6022_DeviceTypeDef;
                                                                
 /** 
@@ -50,11 +50,11 @@ typedef enum
      HT6022_ERROR_OTHER         = -99
 }HT6022_ErrorTypeDef;
 #define  IS_HT6022_ERROR(ERROR) (((ERROR) == HT6022_SUCCESS) || \
-				 ((ERROR) == HT6022_ERROR_INVALID_PARAM) || \
-				 ((ERROR) == HT6022_ERROR_ACCESS )   || \
-				 ((ERROR) == HT6022_ERROR_NO_DEVICE) || \
-				 ((ERROR) == HT6022_ERROR_TIMEOUT)   || \
-				 ((ERROR) == HT6022_ERROR_NO_MEM)    || \
+                 ((ERROR) == HT6022_ERROR_INVALID_PARAM) || \
+                 ((ERROR) == HT6022_ERROR_ACCESS )   || \
+                 ((ERROR) == HT6022_ERROR_NO_DEVICE) || \
+                 ((ERROR) == HT6022_ERROR_TIMEOUT)   || \
+                 ((ERROR) == HT6022_ERROR_NO_MEM)    || \
                  ((ERROR) == HT6022_ERROR_OTHER))
  
 /** 
@@ -104,14 +104,14 @@ typedef enum
   */   
 typedef enum
 { 
-  	HT6022_24MSa  = 0x30, /*!< 24MSa per channel */
-	HT6022_16MSa  = 0x10, /*!< 16MSa per channel */
-	HT6022_8MSa   = 0x08, /*!< 8MSa per channel */
-	HT6022_4MSa   = 0x04, /*!< 4MSa per channel */
-	HT6022_1MSa   = 0x01, /*!< 1MSa per channel */
-	HT6022_500KSa = 0x32, /*!< 500KSa per channel */
-	HT6022_200KSa = 0x14, /*!< 200KSa per channel */
-	HT6022_100KSa = 0x0A  /*!< 100KSa per channel */
+    HT6022_24MSa  = 0x30, /*!< 24MSa per channel */
+    HT6022_16MSa  = 0x10, /*!< 16MSa per channel */
+    HT6022_8MSa   = 0x08, /*!< 8MSa per channel */
+    HT6022_4MSa   = 0x04, /*!< 4MSa per channel */
+    HT6022_1MSa   = 0x01, /*!< 1MSa per channel */
+    HT6022_500KSa = 0x32, /*!< 500KSa per channel */
+    HT6022_200KSa = 0x14, /*!< 200KSa per channel */
+    HT6022_100KSa = 0x0A  /*!< 100KSa per channel */
 }HT6022_SRTypeDef;
 #define  IS_HT6022_SR(SR) (((SR) == HT6022_24MSa)  ||\
                           ((SR) == HT6022_16MSa)  ||\
@@ -127,10 +127,10 @@ typedef enum
   */   
 typedef enum
 { 
-  	HT6022_10V   = 0x01, /*!< -5V    to 5V    */
-  	HT6022_5V    = 0x02, /*!< -2.5V  to 2.5V  */
-  	HT6022_2V    = 0x05, /*!< -1V    to 1V    */
-  	HT6022_1V    = 0x0A  /*!< -500mv to 500mv */
+    HT6022_10V   = 0x01, /*!< -5V    to 5V    */
+    HT6022_5V    = 0x02, /*!< -2.5V  to 2.5V  */
+    HT6022_2V    = 0x05, /*!< -1V    to 1V    */
+    HT6022_1V    = 0x0A  /*!< -500mv to 500mv */
 }HT6022_IRTypeDef;
 #define  IS_HT6022_IR(IR)   (((IR) == HT6022_10V) ||\
                              ((IR) == HT6022_5V)  ||\
@@ -144,31 +144,31 @@ typedef enum
 
 /* Exported functions --------------------------------------------------------*/ 
 /* Initialization and Configuration functions *********************************/
-HT6022_ErrorTypeDef	HT6022_Init (void);
+HT6022_ErrorTypeDef HT6022_Init (void);
 void HT6022_Exit (void);
-HT6022_ErrorTypeDef	HT6022_DeviceOpen (HT6022_DeviceTypeDef *Device);
+HT6022_ErrorTypeDef HT6022_DeviceOpen (HT6022_DeviceTypeDef *Device);
 void HT6022_DeviceClose (HT6022_DeviceTypeDef *Device);
 HT6022_ErrorTypeDef HT6022_FirmwareUpload (void);
 HT6022_ErrorTypeDef HT6022BL_FirmwareUpload (void);
 /* Read functions ********************************************************/
-HT6022_ErrorTypeDef	HT6022_ReadData (HT6022_DeviceTypeDef *Device,
-									 unsigned char* CH1, unsigned char* CH2,
-					 				 HT6022_DataSizeTypeDef DataSize, 
+HT6022_ErrorTypeDef HT6022_ReadData (HT6022_DeviceTypeDef *Device,
+                                     unsigned char* CH1, unsigned char* CH2,
+                                     HT6022_DataSizeTypeDef DataSize, 
                                      unsigned int  Timeout);
 /* Read and Write calibration values functions *********************************/
-HT6022_ErrorTypeDef	HT6022_SetCalValues (HT6022_DeviceTypeDef *Device,
-					    			 	 unsigned char* CalValues,
+HT6022_ErrorTypeDef HT6022_SetCalValues (HT6022_DeviceTypeDef *Device,
+                                         unsigned char* CalValues,
                                          HT6022_CVSizeTypeDef CVSize); 
-HT6022_ErrorTypeDef	HT6022_GetCalValues (HT6022_DeviceTypeDef *Device,
-					    				 unsigned char* CalValues,   
-					    				 HT6022_CVSizeTypeDef CVSize); 
+HT6022_ErrorTypeDef HT6022_GetCalValues (HT6022_DeviceTypeDef *Device,
+                                         unsigned char* CalValues,   
+                                         HT6022_CVSizeTypeDef CVSize); 
 /* Sample rate and input range configuration functions *******************************/
-HT6022_ErrorTypeDef	HT6022_SetSR (HT6022_DeviceTypeDef *Device,
-				      			  HT6022_SRTypeDef SR);
+HT6022_ErrorTypeDef HT6022_SetSR (HT6022_DeviceTypeDef *Device,
+                                  HT6022_SRTypeDef SR);
 HT6022_ErrorTypeDef HT6022_SetCH1IR (HT6022_DeviceTypeDef *Device,
-				          			 HT6022_IRTypeDef IR);
+                                     HT6022_IRTypeDef IR);
 HT6022_ErrorTypeDef HT6022_SetCH2IR (HT6022_DeviceTypeDef *Device,
-				                     HT6022_IRTypeDef IR);
+                                     HT6022_IRTypeDef IR);
 #ifdef __cplusplus
 }
 #endif

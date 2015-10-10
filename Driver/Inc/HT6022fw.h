@@ -38,7 +38,7 @@ extern unsigned char HT6022_Firmware[];
   */ 
 
 #ifdef __cplusplus
-	}
+    }
 #endif
 
 #endif

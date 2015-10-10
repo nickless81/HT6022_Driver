@@ -2318,6 +2318,6 @@ unsigned char HT6022_Firmware [] =
   */
 
 #ifdef __cplusplus
- 	}
+    }
 #endif
 /****************************END OF FILE*********************************/
