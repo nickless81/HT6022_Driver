@@ -5,14 +5,12 @@
 #include <QDebug>
 #include <QList>
 #include "ht6022bx_global.h"
-//#include "firmware6022bx.h"
 class HT6022BXSHARED_EXPORT HT6022bx : public QObject
 {
     Q_OBJECT
 public:
     explicit HT6022bx(QObject *parent = 0);
     ~HT6022bx();
-    //Firmware6022BX *Fw;
 private:
     HT6022_ErrorTypeDef DeviceInit(void);
     void DeviceExit(void);
