@@ -14,7 +14,7 @@ CFLAGS   = -pedantic
 CFLAGS   += -Wall
 
 #Executável
-EXEC = a.out
+EXEC = LoadFirmwareHT6022BL
 
 # Arquivos fonte
 SRC    = $(wildcard Usr/*.c)
