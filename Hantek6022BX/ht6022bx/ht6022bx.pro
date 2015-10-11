@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       -= gui
-
+QT += dbus
 TARGET = ht6022bx
 TEMPLATE = lib
 
@@ -21,8 +21,15 @@ HEADERS += ht6022bx.h\
     ../../Driver/Inc/HT6022fw.h \
     ../../Driver/Inc/HT6022BLfw.h \
     firmware6022bx.h
-
+# Settings for different operating systems
+unix:!macx {
+    INCLUDEPATH += /usr/include/libusb-1.0
+}
 unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+LIBUSB_VERSION = 1
+LIBS += -lusb-1.0
+DEFINES += LIBUSB_VERSION=$${LIBUSB_VERSION}
+
