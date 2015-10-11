@@ -1,0 +1,12 @@
+#ifndef HT6022BX_GLOBAL_H
+#define HT6022BX_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(HT6022BX_LIBRARY)
+#  define HT6022BXSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define HT6022BXSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // HT6022BX_GLOBAL_H
