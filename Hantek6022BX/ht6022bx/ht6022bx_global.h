@@ -2,7 +2,6 @@
 #define HT6022BX_GLOBAL_H
 
 #include <QtCore/qglobal.h>
-#include <QtDBus>
 #include <QString>
 #include <libusb-1.0/libusb.h>
 #include "HT6022fw.h"
@@ -35,8 +34,10 @@ typedef enum
      HT6022_ERROR_NO_DEVICE     = -4,
      HT6022_ERROR_TIMEOUT       = -7,
      HT6022_ERROR_NO_MEM        = -11,
+     HT6022_ERROR_NO_DEVICELIST = -12,
      HT6022_ERROR_OTHER         = -99
 }HT6022_ErrorTypeDef;
+
 #define  IS_HT6022_ERROR(ERROR) (((ERROR) == HT6022_SUCCESS) || \
                  ((ERROR) == HT6022_ERROR_INVALID_PARAM) || \
                  ((ERROR) == HT6022_ERROR_ACCESS )   || \
