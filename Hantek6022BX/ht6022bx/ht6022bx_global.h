@@ -11,7 +11,8 @@
 #else
 #  define HT6022BXSHARED_EXPORT Q_DECL_IMPORT
 #endif
-#define HT6022_FW_VENDOR    0X04B4
+#define HT6022_VENDOR       0X04B4
+#define HT6022_VENDOR_FW    0X04B5
 #define HT6022BE_MODEL      0X6022
 #define HT6022BL_MODEL      0X602A
 typedef struct
@@ -20,6 +21,7 @@ typedef struct
     int             FwSize;
     int             IdProduct;
     int             IdVendor;
+    int             IdVendorFW;
     unsigned char*  Firmware;
 }HT6022BX_Info;
 

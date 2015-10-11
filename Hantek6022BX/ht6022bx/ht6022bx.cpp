@@ -5,16 +5,18 @@ HT6022bx::HT6022bx(QObject *parent) : QObject(parent)
 {
     qDebug("HT6022bx::HT6022bx()");
     HT6022BX_Info BE;
-    BE.Name     =   "6022BE";
-    BE.FwSize   =   HT6022_FIRMWARE_SIZE;
-    BE.IdProduct=   HT6022BE_MODEL;
-    BE.IdVendor =   HT6022_FW_VENDOR;
-    BE.Firmware =   HT6022_Firmware;
+    BE.Name         =   "6022BE";
+    BE.FwSize       =   HT6022_FIRMWARE_SIZE;
+    BE.IdProduct    =   HT6022BE_MODEL;
+    BE.IdVendor     =   HT6022_VENDOR;
+    BE.Firmware     =   HT6022_Firmware;
+    BE.IdVendorFW   =   HT6022_VENDOR_FW;
     HT6022BX_Info BL;
-    BL.Name     =   "6022BL";
-    BL.FwSize   =   HT6022BL_FIRMWARE_SIZE;
-    BL.IdProduct=   HT6022BL_MODEL;
-    BL.IdVendor =   HT6022_FW_VENDOR;
+    BL.Name         =   "6022BL";
+    BL.FwSize       =   HT6022BL_FIRMWARE_SIZE;
+    BL.IdProduct    =   HT6022BL_MODEL;
+    BL.IdVendor     =   HT6022_VENDOR;
+    BL.IdVendorFW   =   HT6022_VENDOR_FW;
     BL.Firmware =   HT6022BL_Firmware;
     this->HantekDevices = new QList<HT6022BX_Info>;
     this->HantekDevices->append(BE);
@@ -56,6 +58,14 @@ void HT6022bx::FirmwareInstall(const QString &DeviceName)
     if (Dev_handle == 0)
     {
         qWarning("USB Library cannot open device IdVendor: 0x%04X, IdProduct: 0x%04X",device->IdVendor,device->IdProduct);
+        Dev_handle = libusb_open_device_with_vid_pid(NULL, device->IdVendorFW, device->IdProduct);
+        if (Dev_handle != 0)
+        {
+            qDebug() << "Device Hantek"<< device->Name << "with Firmware installed connected";
+            qDebug("Device Hantek IdVendor: 0x%04X IdProduct 0x%04X Connected and Ready to Used", device->IdVendorFW, device->IdProduct);
+            emit deviceReady(HT6022_SUCCESS);
+            return;
+        }
         emit deviceReady(HT6022_ERROR_NO_DEVICE);
         return;
      }
@@ -139,6 +149,7 @@ void HT6022bx::searchDevice(const QString &DeviceName)
     qDebug() << "HT6022bx::searchDevice("<< DeviceName << ")";
     int IdProduct;
     int IdVendor;
+    int IdVendorFW;
     HT6022_ErrorTypeDef errorCode;
     errorCode = DeviceInit();
     if(errorCode<0){
@@ -151,13 +162,22 @@ void HT6022bx::searchDevice(const QString &DeviceName)
         {
             IdProduct   = this->HantekDevices->at(i).IdProduct;
             IdVendor    = this->HantekDevices->at(i).IdVendor;
+            IdVendorFW  = this->HantekDevices->at(i).IdVendorFW;
         }
     }
     libusb_device_handle  *Dev_handle;
     Dev_handle = libusb_open_device_with_vid_pid(NULL, IdVendor, IdProduct);
     if (Dev_handle == 0)
     {
-        qWarning("No Device Connected");
+        qWarning("No Device without Firmware Connected");
+        Dev_handle = libusb_open_device_with_vid_pid(NULL, IdVendorFW, IdProduct);
+        if (Dev_handle != 0)
+        {
+            qDebug() << "Device Hantek"<< DeviceName << "with Firmware installed connected";
+            qDebug("Device Hantek IdVendor: 0x%04X IdProduct 0x%04X Connected and Ready to Used", IdVendorFW, IdProduct);
+            emit deviceConnected(HT6022_SUCCESS);
+            return;
+        }
         emit deviceConnected(HT6022_ERROR_NO_DEVICE);
         return;
     }
@@ -182,8 +202,8 @@ void HT6022bx::printDevices(){
     qDebug("HT6022bx::printDevices()");
     for (int i = 0; i < this->HantekDevices->size(); ++i) {
         qDebug() << "Model:\t" << this->HantekDevices->at(i).Name;
-        qDebug("IdProduct: \t0x%04X"  ,this->HantekDevices->at(i).IdProduct);
-        qDebug("IdVendor: \t0x%04X"   ,this->HantekDevices->at(i).IdVendor);
-        qDebug("FwSize: \t%u"        ,this->HantekDevices->at(i).FwSize);
+        qDebug("IdProduct: \t0x%04X",this->HantekDevices->at(i).IdProduct);
+        qDebug("IdVendor: \t0x%04X" ,this->HantekDevices->at(i).IdVendor);
+        qDebug("FwSize: \t%u"       ,this->HantekDevices->at(i).FwSize);
     }
 }
