@@ -20,16 +20,10 @@ typedef struct
     QString         Name;
     int             FwSize;
     int             IdProduct;
+    int             IdVendor;
     unsigned char*  Firmware;
 }HT6022BX_Info;
-/**
-  * @brief Device Handle
-  */
-typedef struct
-{
-    libusb_device_handle *DeviceHandle;
-    unsigned char Address;
-}HT6022_DeviceTypeDef;
+
 /**
   * @brief Error Code
   */
