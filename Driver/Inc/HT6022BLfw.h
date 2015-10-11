@@ -24,7 +24,7 @@
   * @{
   */
 /* Private define ------------------------------------------------------------*/ 
-#define HT6022BL_FIRMWARE_SIZE          470
+#define HT6022BL_FIRMWARE_SIZE          472
 #define HT6022BL_FIRMWARE_VENDOR_ID     0X04B4
 #define HT6022BL_FIRMWARE_PRODUCT_ID    0X602A
 #define HT6022BL_FIRMWARE_REQUEST_TYPE  0X40
