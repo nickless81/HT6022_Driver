@@ -6,12 +6,16 @@ import QtQuick.Dialogs 1.2
 ApplicationWindow {
     id: window
     title: qsTr("Hello World")
-    width: 640
-    height: 480
+    width: 460
+    height: 200
     visible: true
     signal qmlGetDevicesInfo()
     signal qmlSearchDevices(string deviceName)
     signal qmlInstallFW(string deviceName)
+    function enableDownload(){
+        console.log("Received Signal")
+        mainForm.buttonInstallFW.enabled = true
+    }
     menuBar: MenuBar {
         Menu {
             title: qsTr("&File")
@@ -26,25 +30,22 @@ ApplicationWindow {
         }
     }
     MainForm {
-        //var texto = qsTr("6022BL")
+        id: mainForm
         anchors.fill: parent
-        button1.onClicked:
+        buttonFWAvailable.onClicked:
         {
-            //messageDialog.show(qsTr("Button 1 pressed"))
             window.qmlGetDevicesInfo()
         }
-        button2.onClicked:
+        buttonSearchDevice.onClicked:
         {
-            //text: qsTr("6022BL")
-            //messageDialog.show(qsTr("Button 2 pressed"))
             window.qmlSearchDevices("6022BL");
         }
-        button3.onClicked:
+        buttonInstallFW.onClicked:
         {
-            //text: qsTr("6022BL")
-            //messageDialog.show(qsTr("Button 3 pressed"))
+            //onDeviceConnected: console.log("Error code:",errorCode)
             window.qmlInstallFW("6022BL")
         }
+        buttonQuit.onClicked: Qt.quit();
     }
 
     MessageDialog {
@@ -56,10 +57,20 @@ ApplicationWindow {
         }
     }
 }
-/**
-signals:
-    void deviceConnected(HT6022_ErrorTypeDef errorCode);
-    void deviceReady(HT6022_ErrorTypeDef errorCode);
-    void sendDevicesInfo(QList<HT6022BX_Info> *DeviceName);
-    qml slots:
-**/
+/*
+        Button {
+            id: buttonFWAvailable
+            text: qsTr("Firmware Available")
+        }
+
+        Button {
+            id: buttonSearchDevice
+            text: qsTr("Search Device")
+        }
+
+        Button {
+            id: buttonInstallFW
+            text: qsTr("Install Firmware")
+            enabled: false
+        }
+*/

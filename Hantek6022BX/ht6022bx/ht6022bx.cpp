@@ -63,7 +63,7 @@ void HT6022bx::FirmwareInstall(const QString &DeviceName)
         {
             qDebug() << "Device Hantek"<< device->Name << "with Firmware installed connected";
             qDebug("Device Hantek IdVendor: 0x%04X IdProduct 0x%04X Connected and Ready to Used", device->IdVendorFW, device->IdProduct);
-            emit deviceReady(HT6022_SUCCESS);
+            emit deviceReady(HT6022_FW_SUCCESS);
             return;
         }
         emit deviceReady(HT6022_ERROR_NO_DEVICE);
@@ -175,7 +175,8 @@ void HT6022bx::searchDevice(const QString &DeviceName)
         {
             qDebug() << "Device Hantek"<< DeviceName << "with Firmware installed connected";
             qDebug("Device Hantek IdVendor: 0x%04X IdProduct 0x%04X Connected and Ready to Used", IdVendorFW, IdProduct);
-            emit deviceConnected(HT6022_SUCCESS);
+            qDebug("\n\temitting deviceConnected(%u)\n",HT6022_FW_SUCCESS);
+            emit deviceConnected(HT6022_FW_SUCCESS);
             return;
         }
         emit deviceConnected(HT6022_ERROR_NO_DEVICE);
@@ -184,7 +185,9 @@ void HT6022bx::searchDevice(const QString &DeviceName)
     libusb_close(Dev_handle);
     this->DeviceExit();
     qDebug() << "Hantek Device Connected: " << DeviceName;
-    emit deviceConnected(HT6022_SUCCESS);
+    qDebug("\n\temitting deviceConnected(%u)\n",HT6022_DEVICE_CONNECTED);
+    emit deviceConnected(HT6022_DEVICE_CONNECTED);
+    emit enableDownload();
     return;
 }
 void HT6022bx::getDevicesInfo()

@@ -17,10 +17,13 @@ private:
     QList<HT6022BX_Info> *HantekDevices;
     void printDevices();
 signals:
+    //void deviceConnected(HT6022_ErrorTypeDef errorCode);
     void deviceConnected(HT6022_ErrorTypeDef errorCode);
     void deviceReady(HT6022_ErrorTypeDef errorCode);
     void sendDevicesInfo(QList<HT6022BX_Info> *DeviceName);
     void libError(HT6022_ErrorTypeDef errorCode);
+    void enableDownload();
+    void downloadFinnish();
 public slots:
     void searchDevice(const QString &DeviceName);
     void FirmwareInstall(const QString &DeviceName);

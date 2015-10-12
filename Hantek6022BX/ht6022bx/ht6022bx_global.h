@@ -30,14 +30,16 @@ typedef struct
   */
 typedef enum
 {
-     HT6022_SUCCESS  = 0,
-     HT6022_ERROR_INVALID_PARAM = -2,
-     HT6022_ERROR_ACCESS        = -3,
-     HT6022_ERROR_NO_DEVICE     = -4,
-     HT6022_ERROR_TIMEOUT       = -7,
-     HT6022_ERROR_NO_MEM        = -11,
-     HT6022_ERROR_NO_DEVICELIST = -12,
-     HT6022_ERROR_OTHER         = -99
+    HT6022_SUCCESS              =   0,//Firmware Installed Properly
+    HT6022_FW_SUCCESS           =   1,//Device Connected with Firmware already Installed
+    HT6022_DEVICE_CONNECTED     =   2,
+    HT6022_ERROR_INVALID_PARAM  =  -2,
+    HT6022_ERROR_ACCESS         =  -3,
+    HT6022_ERROR_NO_DEVICE      =  -4,
+    HT6022_ERROR_TIMEOUT        =  -7,
+    HT6022_ERROR_NO_MEM         = -11,
+    HT6022_ERROR_NO_DEVICELIST  = -12,
+    HT6022_ERROR_OTHER          = -99
 }HT6022_ErrorTypeDef;
 
 #define  IS_HT6022_ERROR(ERROR) (((ERROR) == HT6022_SUCCESS) || \
