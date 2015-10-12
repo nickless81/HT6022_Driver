@@ -11,8 +11,15 @@ QT       -= gui
 TARGET = hantekfw
 CONFIG   += console
 CONFIG   -= app_bundle
-
+CONFIG   += c++11
 TEMPLATE = app
 
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Hantek6022BX/ht6022bx/release/ -lht6022bx
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Hantek6022BX/ht6022bx/debug/ -lht6022bx
+else:unix: LIBS += -L$$OUT_PWD/../Hantek6022BX/ht6022bx/ -lht6022bx
+
+INCLUDEPATH += $$PWD/../Hantek6022BX/ht6022bx
+INCLUDEPATH += $$PWD/../Driver/Inc/
+DEPENDPATH += $$PWD/../Hantek6022BX/ht6022bx
 
 SOURCES += main.cpp
