@@ -7,7 +7,7 @@
 QT       -= gui
 TARGET = ht6022bx
 TEMPLATE = lib
-
+CONFIG   += c++11
 DEFINES += HT6022BX_LIBRARY
 INCLUDEPATH += ../../Driver/Inc/
 SOURCES += ht6022bx.cpp \
