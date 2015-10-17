@@ -79,6 +79,11 @@ typedef struct
 }HT6022BX_ControlTransfer;
 typedef struct
 {
+    libusb_device_handle    *DeviceHandle;
+    unsigned char           Address;
+}HT6022BX_DeviceTypeDef;
+typedef struct
+{
     QString         Name;
     int             FwSize;
     int             IdProduct;
@@ -104,23 +109,103 @@ typedef struct
   */
 typedef enum
 {
-    HT6022_SUCCESS              =   0,//Firmware Installed Properly
-    HT6022_FW_SUCCESS           =   1,//Device Connected with Firmware already Installed
-    HT6022_DEVICE_CONNECTED     =   2,
-    HT6022_ERROR_INVALID_PARAM  =  -2,
-    HT6022_ERROR_ACCESS         =  -3,
-    HT6022_ERROR_NO_DEVICE      =  -4,
-    HT6022_ERROR_TIMEOUT        =  -7,
-    HT6022_ERROR_NO_MEM         = -11,
-    HT6022_ERROR_NO_DEVICELIST  = -12,
-    HT6022_ERROR_OTHER          = -99
+    HT6022BX_SUCCESS              =   0,//Firmware Installed Properly
+    HT6022BX_FW_SUCCESS           =   1,//Device Connected with Firmware already Installed
+    HT6022BX_DEVICE_CONNECTED     =   2,
+    HT6022BX_ERROR_INVALID_PARAM  =  -2,
+    HT6022BX_ERROR_ACCESS         =  -3,
+    HT6022BX_ERROR_NO_DEVICE      =  -4,
+    HT6022BX_ERROR_TIMEOUT        =  -7,
+    HT6022BX_ERROR_NO_MEM         = -11,
+    HT6022BX_ERROR_NO_DEVICELIST  = -12,
+    HT6022BX_ERROR_OTHER          = -99
 }HT6022BX_ErrorTypeDef;
 
-#define  IS_HT6022_ERROR(ERROR) (((ERROR) == HT6022_SUCCESS) || \
-                 ((ERROR) == HT6022_ERROR_INVALID_PARAM) || \
-                 ((ERROR) == HT6022_ERROR_ACCESS )   || \
-                 ((ERROR) == HT6022_ERROR_NO_DEVICE) || \
-                 ((ERROR) == HT6022_ERROR_TIMEOUT)   || \
-                 ((ERROR) == HT6022_ERROR_NO_MEM)    || \
-                 ((ERROR) == HT6022_ERROR_OTHER))
+#define  IS_HT6022BX_ERROR(ERROR) (((ERROR) == HT6022BX_SUCCESS) || \
+                 ((ERROR) == HT6022BX_ERROR_INVALID_PARAM) || \
+                 ((ERROR) == HT6022BX_ERROR_ACCESS )   || \
+                 ((ERROR) == HT6022BX_ERROR_NO_DEVICE) || \
+                 ((ERROR) == HT6022BX_ERROR_TIMEOUT)   || \
+                 ((ERROR) == HT6022BX_ERROR_NO_MEM)    || \
+                 ((ERROR) == HT6022BX_ERROR_OTHER))
+/**
+  * @brief  Size of data bufffer
+  */
+typedef enum
+{
+  HT6022BX_1KB   = 0x00000400, /*!< 1024 Bytes */
+  HT6022BX_2KB   = 0x00000800, /*!< 2048 Bytes */
+  HT6022BX_4KB   = 0x00001000, /*!< 4096 Bytes */
+  HT6022BX_8KB   = 0x00002000, /*!< 8192 Bytes */
+  HT6022BX_16KB  = 0x00004000, /*!< 16384 Bytes */
+  HT6022BX_32KB  = 0x00008000, /*!< 32768 Bytes */
+  HT6022BX_64KB  = 0x00010000, /*!< 65536 Bytes */
+  HT6022BX_128KB = 0x00020000, /*!< 131072 Bytes */
+  HT6022BX_256KB = 0x00040000, /*!< 262144 Bytes */
+  HT6022BX_512KB = 0x00080000, /*!< 524288 Bytes */
+  HT6022BX_1MB   = 0x00100000  /*!< 1048576 Bytes */
+}HT6022BX_DataSizeTypeDef;
+#define  IS_HT6022BX_DATASIZE(SIZE) (((SIZE) == HT6022BX_1KB)  ||\
+                                   ((SIZE) == HT6022BX_2KB)  ||\
+                                   ((SIZE) == HT6022BX_4KB)  ||\
+                                   ((SIZE) == HT6022BX_8KB)  ||\
+                                   ((SIZE) == HT6022BX_16KB) ||\
+                                   ((SIZE) == HT6022BX_32KB) ||\
+                                   ((SIZE) == HT6022BX_64KB) ||\
+                                   ((SIZE) == HT6022BX_128KB)||\
+                                   ((SIZE) == HT6022BX_256KB)||\
+                                   ((SIZE) == HT6022BX_512KB)||\
+                                   ((SIZE) == HT6022BX_1MB))
+
+/**
+  * @brief Size of calibration values buffer
+  */
+typedef enum
+{
+  HT6022BX_32B   = 0x00000010, /*!< 32 Bytes */
+  HT6022BX_64B   = 0x00000020, /*!< 64 Bytes */
+  HT6022BX_128B  = 0x00000080 /*!< 128 Bytes */
+}HT6022BX_CVSizeTypeDef;
+#define  IS_HT6022BX_CVSIZE(SIZE)   (((SIZE) == HT6022BX_32B)  ||\
+                                    ((SIZE) == HT6022BX_64B)  ||\
+                                    ((SIZE) == HT6022BX_128B))
+
+/**
+  * @brief  Sample rate
+  */
+typedef enum
+{
+    HT6022BX_24MSa  = 0x30, /*!< 24MSa per channel */
+    HT6022BX_16MSa  = 0x10, /*!< 16MSa per channel */
+    HT6022BX_8MSa   = 0x08, /*!< 8MSa per channel */
+    HT6022BX_4MSa   = 0x04, /*!< 4MSa per channel */
+    HT6022BX_1MSa   = 0x01, /*!< 1MSa per channel */
+    HT6022BX_500KSa = 0x32, /*!< 500KSa per channel */
+    HT6022BX_200KSa = 0x14, /*!< 200KSa per channel */
+    HT6022BX_100KSa = 0x0A  /*!< 100KSa per channel */
+}HT6022BX_SRTypeDef;
+#define  IS_HT6022BX_SR(SR) (((SR) == HT6022BX_24MSa)  ||\
+                            ((SR) == HT6022BX_16MSa)  ||\
+                            ((SR) == HT6022BX_8MSa)   ||\
+                            ((SR) == HT6022BX_4MSa)   ||\
+                            ((SR) == HT6022BX_1MSa)   ||\
+                            ((SR) == HT6022BX_500KSa) ||\
+                            ((SR) == HT6022BX_200KSa) ||\
+                            ((SR) == HT6022BX_100KSa))
+
+/**
+  * @brief Input range
+  */
+typedef enum
+{
+    HT6022BX_10V   = 0x01, /*!< -5V    to 5V    */
+    HT6022BX_5V    = 0x02, /*!< -2.5V  to 2.5V  */
+    HT6022BX_2V    = 0x05, /*!< -1V    to 1V    */
+    HT6022BX_1V    = 0x0A  /*!< -500mv to 500mv */
+}HT6022BX_IRTypeDef;
+#define  IS_HT6022BX_IR(IR) (((IR) == HT6022BX_10V) ||\
+                            ((IR) == HT6022BX_5V)  ||\
+                            ((IR) == HT6022BX_2V)  ||\
+                            ((IR) == HT6022BX_1V))
+
 #endif // HT6022BX_GLOBAL_H

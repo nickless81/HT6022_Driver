@@ -12,7 +12,7 @@ public:
     explicit HT6022bx(QObject *parent = 0);
     ~HT6022bx();
 private:
-    HT6022_ErrorTypeDef DeviceInit(void);
+    HT6022BX_ErrorTypeDef DeviceInit(void);
     void DeviceExit(void);
     QList<HT6022BX_Info>            *HantekDevices;
     QList<HT6022BX_DeviceTypeDef>   *Devices;//FIXME:doubts about this!!
@@ -33,16 +33,14 @@ private:
     HT6022BX_ErrorTypeDef setCH2IR     (HT6022BX_DeviceTypeDef *Device, const unsigned int index,HT6022BX_IRTypeDef IR);
     QList<unsigned char> *AddressList;
 signals:
-    //void deviceConnected(HT6022_ErrorTypeDef errorCode);
-    void deviceConnected(HT6022_ErrorTypeDef errorCode);
-    void deviceReady(HT6022_ErrorTypeDef errorCode);
+    //void deviceConnected(HT6022BX_ErrorTypeDef errorCode);
+    void deviceConnected(HT6022BX_ErrorTypeDef errorCode);
+    void deviceReady(HT6022BX_ErrorTypeDef errorCode);
     void sendDevicesInfo(QList<HT6022BX_Info> *DeviceName);
-    void libError(HT6022_ErrorTypeDef errorCode);
+    void libError(HT6022BX_ErrorTypeDef errorCode);
     void enableDownload();
     void downloadFinnish();
 public slots:
-    void searchDevice           (const QString &DeviceName);
-    void FirmwareInstall        (const QString &DeviceName);
     void searchDevice           (const QString &DeviceName);
     void searchDeviceIndex      (const unsigned int index);
     void FirmwareInstall        (const QString &DeviceName);
