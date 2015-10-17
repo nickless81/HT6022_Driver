@@ -41,8 +41,8 @@ signals:
     void enableDownload();
     void downloadFinnish();
 public slots:
-    void searchDevice(const QString &DeviceName);
-    void FirmwareInstall(const QString &DeviceName);
+    void searchDevice           (const QString &DeviceName);
+    void FirmwareInstall        (const QString &DeviceName);
     void searchDevice           (const QString &DeviceName);
     void searchDeviceIndex      (const unsigned int index);
     void FirmwareInstall        (const QString &DeviceName);

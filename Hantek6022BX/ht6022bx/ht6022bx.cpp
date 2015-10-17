@@ -171,8 +171,11 @@ void HT6022bx::FirmwareInstall(const QString &DeviceName)
             libusb_release_interface(DeviceHandle, 0);
             libusb_close(DeviceHandle);
             this->DeviceExit();
+<<<<<<< Updated upstream
             qWarning("USB Library cannot contrl_transfer the Firmware for device IdVendor: 0x%04X, IdProduct: 0x%04X",device->IdVendor,device->IdProduct);
             emit deviceReady(HT6022_ERROR_OTHER);
+=======
+>>>>>>> Stashed changes
             qWarning("USB Library cannot control_transfer the Firmware for device IdVendor: 0x%04X, IdProduct: 0x%04X",device->IdVendor,device->IdProduct);
             emit deviceReady(HT6022BX_ERROR_OTHER);
             return;
@@ -343,6 +346,41 @@ void HT6022bx::searchDevice(const QString &DeviceName)
     qDebug() << "Hantek Device Connected: " << DeviceName;
     qDebug("\n\temitting deviceConnected(%u)\n",HT6022_DEVICE_CONNECTED);
     emit deviceConnected(HT6022_DEVICE_CONNECTED);
+    emit enableDownload();
+    return;
+}
+void HT6022bx::searchDeviceIndex(const unsigned int index)
+{
+    qDebug() << "HT6022bx::searchDeviceIndex("<< index << ")";
+    HT6022BX_ErrorTypeDef errorCode;
+    errorCode = DeviceInit();
+    if(errorCode<0){
+        qWarning("USB Library not initialized");
+        emit deviceConnected(errorCode);
+        return;
+    }
+    libusb_device_handle  *Dev_handle;
+    Dev_handle = libusb_open_device_with_vid_pid(NULL, this->HantekDevices->at(index).IdVendor, this->HantekDevices->at(index).IdProduct);
+    if (Dev_handle == 0)
+    {
+        qWarning("No Device without Firmware Connected");
+        Dev_handle = libusb_open_device_with_vid_pid(NULL, this->HantekDevices->at(index).IdVendor, this->HantekDevices->at(index).IdProduct);
+        if (Dev_handle != 0)
+        {
+            qDebug() << "Device Hantek"<< this->HantekDevices->at(index).Name << "with Firmware installed connected";
+            qDebug("Device Hantek IdVendor: 0x%04X IdProduct 0x%04X Connected and Ready to Used", this->HantekDevices->at(index).IdVendorFW, this->HantekDevices->at(index).IdProduct);
+            qDebug("\n\temitting deviceConnected(%u)\n",HT6022BX_FW_SUCCESS);
+            emit deviceConnected(HT6022BX_FW_SUCCESS);
+            return;
+        }
+        emit deviceConnected(HT6022BX_ERROR_NO_DEVICE);
+        return;
+    }
+    libusb_close(Dev_handle);
+    this->DeviceExit();
+    qDebug() << "Hantek Device Connected: " << this->HantekDevices->at(index).Name;
+    qDebug("\n\temitting deviceConnected(%u)\n",HT6022BX_DEVICE_CONNECTED);
+    emit deviceConnected(HT6022BX_DEVICE_CONNECTED);
     emit enableDownload();
     return;
 }
@@ -565,5 +603,3 @@ HT6022BX_ErrorTypeDef HT6022bx::setCH2IR(HT6022BX_DeviceTypeDef *Device, const u
     Q_UNUSED(IR);
     return HT6022BX_SUCCESS;
 }
-
-
