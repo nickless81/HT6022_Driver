@@ -359,7 +359,7 @@ void HT6022bx::searchDeviceIndex(const unsigned int index)
     if (Dev_handle == 0)
     {
         qWarning("No Device without Firmware Connected");
-        Dev_handle = libusb_open_device_with_vid_pid(NULL, this->HantekDevices->at(index).IdVendor, this->HantekDevices->at(index).IdProduct);
+        Dev_handle = libusb_open_device_with_vid_pid(NULL, this->HantekDevices->at(index).IdVendorFW, this->HantekDevices->at(index).IdProduct);
         if (Dev_handle != 0)
         {
             qDebug() << "Device Hantek"<< this->HantekDevices->at(index).Name << "with Firmware installed connected";
