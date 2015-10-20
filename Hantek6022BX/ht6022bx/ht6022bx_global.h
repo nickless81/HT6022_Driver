@@ -20,41 +20,61 @@
 #define HT6022BX_READ_ENDPOINT      0X86
 #define HT6022BX_CONTROL_SIZE       6
 /**************************************************/
-#define HT6022BX_IR1_REQUEST_TYPE           0X40
-#define HT6022BX_IR1_REQUEST                0XE0
+/**/
+#define HT6022BX_XXX_REQUEST_TYPE           0X40//64
+#define HT6022BX_XXX_REQUEST                0XE8//232
+#define HT6022BX_XXX_VALUE                  0X00
+#define HT6022BX_XXX_INDEX                  0X00
+#define HT6022BX_XXX_LENGTH                 0X01
+#define HT6022BX_XXX_DATA                   0x01
+#define HT6022BX_XXX_SIZE                   0X01
+/**/
+/***************************************************/
+#define HT6022BX_IR1_REQUEST_TYPE           0X40//64
+#define HT6022BX_IR1_REQUEST                0XE0//224
 #define HT6022BX_IR1_VALUE                  0X00
 #define HT6022BX_IR1_INDEX                  0X00
 #define HT6022BX_IR1_SIZE                   0X01
 
-#define HT6022BX_IR2_REQUEST_TYPE           0X40
-#define HT6022BX_IR2_REQUEST                0XE1
+#define HT6022BX_IR2_REQUEST_TYPE           0X40//64
+#define HT6022BX_IR2_REQUEST                0XE1//225
 #define HT6022BX_IR2_VALUE                  0X00
 #define HT6022BX_IR2_INDEX                  0X00
 #define HT6022BX_IR2_SIZE                   0X01
 
-#define HT6022BX_SR_REQUEST_TYPE            0X40
-#define HT6022BX_SR_REQUEST                 0XE2
+#define HT6022BX_SR_REQUEST_TYPE            0X40//64
+#define HT6022BX_SR_REQUEST                 0XE2//226
 #define HT6022BX_SR_VALUE                   0X00
 #define HT6022BX_SR_INDEX                   0X00
 #define HT6022BX_SR_SIZE                    0X01
 
-#define HT6022BX_SETCALLEVEL_REQUEST_TYPE   0XC0
-#define HT6022BX_SETCALLEVEL_REQUEST        0XA2
+#define HT6022BX_SETCALLEVEL_REQUEST_TYPE   0XC0//192
+#define HT6022BX_SETCALLEVEL_REQUEST        0XA2//162
 #define HT6022BX_SETCALLEVEL_VALUE          0X08
 #define HT6022BX_SETCALLEVEL_INDEX          0X00
 
-#define HT6022BX_GETCALLEVEL_REQUEST_TYPE   0X40
-#define HT6022BX_GETCALLEVEL_REQUEST        0XA2
+#define HT6022BX_GETCALLEVEL_REQUEST_TYPE   0X40//64
+#define HT6022BX_GETCALLEVEL_REQUEST        0XA2//162
 #define HT6022BX_GETCALLEVEL_VALUE          0X08
 #define HT6022BX_GETCALLEVEL_INDEX          0X00
 
-#define HT6022BX_READ_CONTROL_REQUEST_TYPE  0X40
-#define HT6022BX_READ_CONTROL_REQUEST       0XE3
+#define HT6022BX_READ_CONTROL_REQUEST_TYPE  0X40//64
+#define HT6022BX_READ_CONTROL_REQUEST       0XE3//227
 #define HT6022BX_READ_CONTROL_VALUE         0X00
 #define HT6022BX_READ_CONTROL_INDEX         0X00
 #define HT6022BX_READ_CONTROL_SIZE          0X01
 #define HT6022BX_READ_CONTROL_DATA          0X01
 #define HT6022BX_READ_BULK_PIPE             0X86//ENDPOINT
+/*
+ bRequest:  Decimal     Hexadecimal
+            232
+            162
+            224
+            225
+            226
+            227
+ */
+
 /**************************************************/
 /*
 int libusb_control_transfer(
@@ -90,8 +110,8 @@ typedef struct
     int             IdVendor;
     int             IdVendorFW;
     unsigned char*  Firmware;
-    libusb_device_handle *DeviceHandle;
-    unsigned char Address;
+    //libusb_device_handle *DeviceHandle;
+    //unsigned char Address;
 }HT6022BX_UsbDevice;
 typedef struct
 {
@@ -175,7 +195,7 @@ typedef enum
   */
 typedef enum
 {
-    HT6022BX_24MSa  = 0x30, /*!< 24MSa per channel */
+    HT6022BX_48MSa  = 0x30, /*!< 24MSa per channel */
     HT6022BX_16MSa  = 0x10, /*!< 16MSa per channel */
     HT6022BX_8MSa   = 0x08, /*!< 8MSa per channel */
     HT6022BX_4MSa   = 0x04, /*!< 4MSa per channel */
@@ -184,7 +204,7 @@ typedef enum
     HT6022BX_200KSa = 0x14, /*!< 200KSa per channel */
     HT6022BX_100KSa = 0x0A  /*!< 100KSa per channel */
 }HT6022BX_SRTypeDef;
-#define  IS_HT6022BX_SR(SR) (((SR) == HT6022BX_24MSa)  ||\
+#define  IS_HT6022BX_SR(SR) (((SR) == HT6022BX_48MSa)  ||\
                             ((SR) == HT6022BX_16MSa)  ||\
                             ((SR) == HT6022BX_8MSa)   ||\
                             ((SR) == HT6022BX_4MSa)   ||\

@@ -24,18 +24,18 @@ HT6022bx::HT6022bx(QObject *parent) : QObject(parent)
     this->HantekDevices = new QList<HT6022BX_Info>;
     this->HantekDevices->append(BE);
     this->HantekDevices->append(BL);
-    this->Devices   =   new QList<HT6022BX_DeviceTypeDef>;
+    this->DeviceList  =   new QList<HT6022BX_DeviceTypeDef>;
     HT6022BX_DeviceTypeDef *tmpDevices;
     for(int i=0;i<HT6022BX_NUMBER_DEVICES;i++)
     {
         tmpDevices = new HT6022BX_DeviceTypeDef;
-        this->Devices->append(*tmpDevices);
+        this->DeviceList->append(*tmpDevices);
     }
     this->AddressList = new QList<unsigned char>;
     qDebug("HT6022_AddressList");
-    if(this->Devices->size()!=0)
+    if(this->DeviceList->size()!=0)
     {
-        qDebug("Size: %u",this->Devices->size());
+        qDebug("Size: %u",this->DeviceList->size());
     }else{
         qDebug("this->Devices empty");
     }
@@ -43,7 +43,6 @@ HT6022bx::HT6022bx(QObject *parent) : QObject(parent)
     {
         this->AddressList->append(0x00);
     }
-    qDebug("HOLAAAAA");
     /*
     *this->IR1->bmRequestType           =   0x40;
     *this->IR1->bRequest                =   0xE0;
@@ -75,12 +74,14 @@ HT6022bx::HT6022bx(QObject *parent) : QObject(parent)
     *this->ReadControl->wLength         =   0x01;
     *this->ReadControl->data            =   0x01;
     */
+    this->UsbDriver = new LibUsbWrapper();
 }
 HT6022bx::~HT6022bx()
 {
     delete this->HantekDevices;
-    delete this->Devices;
+    delete this->DeviceList;
     delete this->AddressList;
+    delete this->UsbDriver;
 }
 void HT6022bx::FirmwareInstall(const QString &DeviceName)
 {
@@ -296,6 +297,7 @@ void HT6022bx::DeviceExit()
 {
     qDebug("HT6022bx::DeviceExit()");
     libusb_exit(NULL);
+    //this->UsbDriver->exitDevice();
     return;
 }
 void HT6022bx::searchDevice(const QString &DeviceName)
@@ -454,7 +456,7 @@ HT6022BX_ErrorTypeDef HT6022bx::deviceOpen(HT6022BX_DeviceTypeDef *Device, const
         if (errorCode != HT6022BX_ERROR_NO_MEM && errorCode != HT6022BX_ERROR_ACCESS)
         {
             //add emitted signal(s)
-            errorCode = HT6022BX_ERROR_OTHER;
+            return  HT6022BX_ERROR_OTHER;
         }
         //add emitted signal(s)
         return (errorCode == HT6022BX_ERROR_NO_MEM)?HT6022BX_ERROR_NO_MEM:HT6022BX_ERROR_ACCESS;
@@ -526,7 +528,7 @@ HT6022BX_ErrorTypeDef HT6022bx::readData(HT6022BX_DeviceTypeDef *Device, const u
         if (errorCode != HT6022BX_ERROR_NO_DEVICE)
         {
             //add emitted signal(s)
-            errorCode = HT6022BX_ERROR_OTHER;
+            return HT6022BX_ERROR_OTHER;
         }
         free(data);
         //add emitted signal(s)
@@ -544,12 +546,13 @@ HT6022BX_ErrorTypeDef HT6022bx::readData(HT6022BX_DeviceTypeDef *Device, const u
         if (errorCode != HT6022BX_ERROR_NO_DEVICE && errorCode != HT6022BX_ERROR_TIMEOUT)
         {
             //add emitted signal(s)
-            errorCode = HT6022BX_ERROR_OTHER;
+            return  HT6022BX_ERROR_OTHER;
         }
         free(data);
         //add emitted signal(s)
         return (errorCode == HT6022BX_ERROR_NO_DEVICE)? HT6022BX_ERROR_NO_DEVICE: HT6022BX_ERROR_TIMEOUT;
     }
+    qDebug("\nnread = %d\n",nread);
     data_temp = data;
     while (nread)
     {
@@ -561,40 +564,266 @@ HT6022BX_ErrorTypeDef HT6022bx::readData(HT6022BX_DeviceTypeDef *Device, const u
     //add emitted signal(s)
     return HT6022BX_SUCCESS;
 }
+HT6022BX_ErrorTypeDef HT6022bx::readDataMulti (HT6022BX_DeviceTypeDef *Device, const unsigned int index,unsigned char* CH1, unsigned char* CH2,HT6022BX_DataSizeTypeDef DataSize,unsigned int  timeout)
+{
+    qDebug() << "HT6022bx::readDataMulti Hantek:" << this->HantekDevices->at(index).Name;
+    unsigned char *data;
+    unsigned char *data_temp;
+    int nread;
+    int errorCode;
+
+    data = (unsigned char*) malloc (sizeof(unsigned char)*DataSize*2);
+    if (data == 0)
+    {
+        //add emitted signal(s)
+        return HT6022BX_ERROR_NO_MEM;
+    }
+    if ((!IS_HT6022BX_DATASIZE (DataSize)) || (Device == NULL) ||  (CH1 == NULL) ||  (CH2 == NULL))
+    {
+        free(data);
+        //add emitted signal(s)
+        return HT6022BX_ERROR_INVALID_PARAM;
+    }
+
+    *data = HT6022BX_READ_CONTROL_DATA;
+    errorCode = libusb_control_transfer(Device->DeviceHandle,
+                                        HT6022BX_READ_CONTROL_REQUEST_TYPE,
+                                        HT6022BX_READ_CONTROL_REQUEST,
+                                        HT6022BX_READ_CONTROL_VALUE,
+                                        HT6022BX_READ_CONTROL_INDEX,
+                                        data,
+                                        HT6022BX_READ_CONTROL_SIZE, 0);
+    if (errorCode != HT6022BX_READ_CONTROL_SIZE)
+    {
+        if (errorCode != HT6022BX_ERROR_NO_DEVICE)
+        {
+            //add emitted signal(s)
+            qDebug("HT6022BX_ERROR_NO_DEVICE");
+            return HT6022BX_ERROR_OTHER;
+        }
+        qDebug(" free(data): HT6022BX_ERROR_NO_DEVICE");
+        free(data);
+        //add emitted signal(s)
+        return HT6022BX_ERROR_NO_DEVICE;
+    }
+    for(int i=0;i<16;i++)
+    {
+        qDebug("readDataMulti : %u",i);
+        /**
+        if(!(data == NULL))
+        {
+            //free(data);
+            data = (unsigned char*) malloc (sizeof(unsigned char)*DataSize*2);
+        }
+        **/
+        errorCode = libusb_bulk_transfer(   Device->DeviceHandle,
+                                            HT6022BX_READ_ENDPOINT,
+                                            data,
+                                            DataSize*2,
+                                            &nread,
+                                            timeout);
+        if(nread == 0){
+            break;
+        }
+        qDebug("Post libusb_bulk_transfer: errorCode %u  nread: %u",errorCode, nread);
+        if (errorCode != HT6022BX_SUCCESS || nread != DataSize*2)
+        {
+            qDebug("errorCode != HT6022BX_SUCCESS || nread != DataSize*2");
+            if (errorCode != HT6022BX_ERROR_NO_DEVICE && errorCode != HT6022BX_ERROR_TIMEOUT)
+            {
+                //add emitted signal(s)
+                qDebug("HT6022BX_ERROR_OTHER");
+                return  HT6022BX_ERROR_OTHER;
+            }
+            qDebug("Previo: (errorCode == HT6022BX_ERROR_NO_DEVICE)? HT6022BX_ERROR_NO_DEVICE: HT6022BX_ERROR_TIMEOUT");
+            free(data);
+            //add emitted signal(s)
+            return (errorCode == HT6022BX_ERROR_NO_DEVICE)? HT6022BX_ERROR_NO_DEVICE: HT6022BX_ERROR_TIMEOUT;
+        }
+        qDebug("\nnread = %d\n",nread);
+        data_temp = data;
+        while (nread)
+        {
+            *CH1++ = *data_temp++;
+            *CH2++ = *data_temp++;
+            nread -= 2;
+        }
+        //free(data_temp);
+        //free (data);
+    }
+    free (data);
+    //add emitted signal(s)
+    return HT6022BX_SUCCESS;
+}
+HT6022BX_ErrorTypeDef HT6022bx::setXXX(HT6022BX_DeviceTypeDef *Device, const unsigned int index)
+{
+    qDebug() << "HT6022bx::setXXX Hantek:" << this->HantekDevices->at(index).Name;
+    int errorCode;
+    /*
+    if ((!IS_HT6022BX_CVSIZE (CVSize)) || (Device == NULL) ||  (CalValues == NULL))
+    {
+        return HT6022BX_ERROR_INVALID_PARAM;
+    }
+    */
+    /*
+    #define HT6022BX_XXX_REQUEST_TYPE           0X40//64
+    #define HT6022BX_XXX_REQUEST                0XE8//232
+    #define HT6022BX_XXX_VALUE                  0X00
+    #define HT6022BX_XXX_INDEX                  0X00
+    #define HT6022BX_XXX_LENGTH                 0X01
+    #define HT6022BX_XXX_SIZE                   0X01
+*/
+    unsigned char data = HT6022BX_READ_CONTROL_DATA;
+    errorCode = libusb_control_transfer (Device->DeviceHandle,
+                                         HT6022BX_XXX_REQUEST_TYPE,
+                                         HT6022BX_XXX_REQUEST,
+                                         HT6022BX_XXX_VALUE,
+                                         HT6022BX_XXX_INDEX,
+                                         &data,
+                                         HT6022BX_XXX_SIZE, 0);
+    if (errorCode != HT6022BX_XXX_SIZE)
+    {
+        if (errorCode != HT6022BX_ERROR_NO_DEVICE)
+        {
+            return  HT6022BX_ERROR_OTHER;
+        }
+        return HT6022BX_ERROR_NO_DEVICE;
+    }
+    return HT6022BX_SUCCESS;
+}
+
 HT6022BX_ErrorTypeDef HT6022bx::setCalValues(HT6022BX_DeviceTypeDef *Device, const unsigned int index,unsigned char* CalValues,HT6022BX_CVSizeTypeDef CVSize)
 {
-    Q_UNUSED(Device);
-    Q_UNUSED(index);
-    Q_UNUSED(CalValues);
-    Q_UNUSED(CVSize);
+    qDebug() << "HT6022bx::setCalValues Hantek:" << this->HantekDevices->at(index).Name;
+    int errorCode;
+    if ((!IS_HT6022BX_CVSIZE (CVSize)) || (Device == NULL) ||  (CalValues == NULL))
+    {
+        return HT6022BX_ERROR_INVALID_PARAM;
+    }
+    errorCode = libusb_control_transfer (Device->DeviceHandle,
+                                         HT6022BX_SETCALLEVEL_REQUEST_TYPE,
+                                         HT6022BX_SETCALLEVEL_REQUEST,
+                                         HT6022BX_SETCALLEVEL_VALUE,
+                                         HT6022BX_SETCALLEVEL_INDEX,
+                                         CalValues,
+                                         CVSize, 0);
+    if (errorCode != CVSize)
+    {
+        if (errorCode != HT6022BX_ERROR_NO_DEVICE)
+        {
+            return  HT6022BX_ERROR_OTHER;
+        }
+        return HT6022BX_ERROR_NO_DEVICE;
+    }
     return HT6022BX_SUCCESS;
 }
 HT6022BX_ErrorTypeDef HT6022bx::getCalValues(HT6022BX_DeviceTypeDef *Device, const unsigned int index,unsigned char* CalValues,HT6022BX_CVSizeTypeDef CVSize)
 {
-    Q_UNUSED(Device);
-    Q_UNUSED(index);
-    Q_UNUSED(CalValues);
-    Q_UNUSED(CVSize);
-    return HT6022BX_SUCCESS;
+    qDebug() << "HT6022bx::getCalValues Hantek:" << this->HantekDevices->at(index).Name;
+    int errorCode;
+    if ((!IS_HT6022BX_CVSIZE (CVSize)) || (Device == NULL) ||  (CalValues == NULL))
+    {
+        return HT6022BX_ERROR_INVALID_PARAM;
+    }
+    errorCode = libusb_control_transfer (
+                    Device->DeviceHandle,
+                    HT6022BX_GETCALLEVEL_REQUEST_TYPE,
+                    HT6022BX_GETCALLEVEL_REQUEST,
+                    HT6022BX_GETCALLEVEL_VALUE,
+                    HT6022BX_GETCALLEVEL_INDEX,
+                    CalValues,
+                    CVSize, 0);
+   if (errorCode != CVSize)
+   {
+       if (errorCode != HT6022BX_ERROR_NO_DEVICE)
+       {
+           return HT6022BX_ERROR_OTHER;
+        }
+        return HT6022BX_ERROR_NO_DEVICE;
+   }
+   return HT6022BX_SUCCESS;
 }
 HT6022BX_ErrorTypeDef HT6022bx::setSR(HT6022BX_DeviceTypeDef *Device, const unsigned int index,HT6022BX_SRTypeDef SR)
 {
-    Q_UNUSED(Device);
-    Q_UNUSED(index);
-    Q_UNUSED(SR);
+    qDebug() << "HT6022bx::setSR Hantek:" << this->HantekDevices->at(index).Name;
+    int errorCode;
+    unsigned char SampleRate = SR;
+    qDebug("SR = 0x%X",SR);
+    if ((!IS_HT6022BX_SR (SR)) || (Device == NULL))
+    {
+        return HT6022BX_ERROR_INVALID_PARAM;
+    }
+    errorCode = libusb_control_transfer (
+                    Device->DeviceHandle,
+                    HT6022BX_SR_REQUEST_TYPE,
+                    HT6022BX_SR_REQUEST,
+                    HT6022BX_SR_VALUE,
+                    HT6022BX_SR_INDEX,
+                    &SampleRate,
+                    HT6022BX_SR_SIZE, 0);
+    if (errorCode != HT6022BX_SR_SIZE)
+    {
+        if (errorCode != HT6022BX_ERROR_NO_DEVICE)
+        {
+            return HT6022BX_ERROR_OTHER;
+        }
+        return HT6022BX_ERROR_NO_DEVICE;
+    }
     return HT6022BX_SUCCESS;
 }
 HT6022BX_ErrorTypeDef HT6022bx::setCH1IR(HT6022BX_DeviceTypeDef *Device, const unsigned int index,HT6022BX_IRTypeDef IR)
 {
-    Q_UNUSED(Device);
-    Q_UNUSED(index);
-    Q_UNUSED(IR);
+    qDebug() << "HT6022bx::setCH1IR Hantek:" << this->HantekDevices->at(index).Name;
+    int errorCode;
+    unsigned char InputRange = IR;
+    qDebug("IR = 0x%X",IR);
+    if ((!IS_HT6022BX_IR (IR)) || (Device == NULL))
+    {
+        return HT6022BX_ERROR_INVALID_PARAM;
+    }
+    errorCode = libusb_control_transfer (
+                    Device->DeviceHandle,
+                    HT6022BX_IR1_REQUEST_TYPE,
+                    HT6022BX_IR1_REQUEST,
+                    HT6022BX_IR1_VALUE,
+                    HT6022BX_IR1_INDEX,
+                    &InputRange,
+                    HT6022BX_IR1_SIZE, 0);
+    if (errorCode != HT6022BX_IR1_SIZE)
+    {
+        if (errorCode != HT6022BX_ERROR_NO_DEVICE)
+        {
+            return HT6022BX_ERROR_OTHER;
+        }
+        return HT6022BX_ERROR_NO_DEVICE;
+    }
     return HT6022BX_SUCCESS;
 }
 HT6022BX_ErrorTypeDef HT6022bx::setCH2IR(HT6022BX_DeviceTypeDef *Device, const unsigned int index,HT6022BX_IRTypeDef IR)
 {
-    Q_UNUSED(Device);
-    Q_UNUSED(index);
-    Q_UNUSED(IR);
+    qDebug() << "HT6022bx::setCH2IR Hantek:" << this->HantekDevices->at(index).Name;
+    int errorCode;
+    unsigned char InputRange = IR;
+    qDebug("IR = 0x%X",IR);
+    if ((!IS_HT6022BX_IR (IR)) || (Device == NULL))
+    {
+         return HT6022BX_ERROR_INVALID_PARAM;
+    }
+    errorCode = libusb_control_transfer (
+                    Device->DeviceHandle,
+                    HT6022BX_IR2_REQUEST_TYPE,
+                    HT6022BX_IR2_REQUEST,
+                    HT6022BX_IR2_VALUE,
+                    HT6022BX_IR2_INDEX,
+                    &InputRange,
+                    HT6022BX_IR2_SIZE, 0);
+    if (errorCode != HT6022BX_IR2_SIZE)
+    {
+        if (errorCode != HT6022BX_ERROR_NO_DEVICE)
+        {
+            return HT6022BX_ERROR_OTHER;
+        }
+        return HT6022BX_ERROR_NO_DEVICE;
+    }
     return HT6022BX_SUCCESS;
 }

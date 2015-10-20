@@ -31,3 +31,10 @@ LIBUSB_VERSION = 1
 LIBS += -lusb-1.0
 DEFINES += LIBUSB_VERSION=$${LIBUSB_VERSION}
 
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../../openhantek/UsbWrapper/UsbWrapper/release/ -lUsbWrapper
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../../openhantek/UsbWrapper/UsbWrapper/debug/ -lUsbWrapper
+else:unix: LIBS += -L$$OUT_PWD/../../../openhantek/UsbWrapper/UsbWrapper/ -lUsbWrapper
+
+INCLUDEPATH += $$PWD/../../../openhantek/UsbWrapper/UsbWrapper
+DEPENDPATH += $$PWD/../../../openhantek/UsbWrapper/UsbWrapper
