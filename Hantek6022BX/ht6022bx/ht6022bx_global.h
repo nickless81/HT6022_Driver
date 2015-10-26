@@ -18,6 +18,7 @@
 #define HT6022BL_AddressListSize    256
 #define HT6022BX_NUMBER_DEVICES     2
 #define HT6022BX_READ_ENDPOINT      0X86
+#define HT6022BX_WRITE_ENDPOINT     0X02
 #define HT6022BX_CONTROL_SIZE       6
 /**************************************************/
 /**/
@@ -106,9 +107,9 @@ typedef struct
 {
     QString         Name;
     int             FwSize;
-    int             IdProduct;
-    int             IdVendor;
-    int             IdVendorFW;
+    qint16          IdProduct;
+    qint16          IdVendor;
+    qint16          IdVendorFW;
     unsigned char*  Firmware;
     //libusb_device_handle *DeviceHandle;
     //unsigned char Address;
@@ -118,9 +119,9 @@ typedef struct
     unsigned int        index;
     QString             Name;
     int                 FwSize;
-    int                 IdProduct;
-    int                 IdVendor;
-    int                 IdVendorFW;
+    qint16              IdProduct;
+    qint16              IdVendor;
+    qint16              IdVendorFW;
     unsigned char*      Firmware;
 }HT6022BX_Info;
 
@@ -153,17 +154,17 @@ typedef enum
   */
 typedef enum
 {
-  HT6022BX_1KB   = 0x00000400, /*!< 1024 Bytes */
-  HT6022BX_2KB   = 0x00000800, /*!< 2048 Bytes */
-  HT6022BX_4KB   = 0x00001000, /*!< 4096 Bytes */
-  HT6022BX_8KB   = 0x00002000, /*!< 8192 Bytes */
-  HT6022BX_16KB  = 0x00004000, /*!< 16384 Bytes */
-  HT6022BX_32KB  = 0x00008000, /*!< 32768 Bytes */
-  HT6022BX_64KB  = 0x00010000, /*!< 65536 Bytes */
-  HT6022BX_128KB = 0x00020000, /*!< 131072 Bytes */
-  HT6022BX_256KB = 0x00040000, /*!< 262144 Bytes */
-  HT6022BX_512KB = 0x00080000, /*!< 524288 Bytes */
-  HT6022BX_1MB   = 0x00100000  /*!< 1048576 Bytes */
+  HT6022BX_1KB   = 0x00000400,//0x04 /*!< 1024 Bytes */
+  HT6022BX_2KB   = 0x00000800,//0x08 /*!< 2048 Bytes */
+  HT6022BX_4KB   = 0x00001000,//0x04 /*!< 4096 Bytes */
+  HT6022BX_8KB   = 0x00002000,//0x04 /*!< 8192 Bytes */
+  HT6022BX_16KB  = 0x00004000,//0x04 /*!< 16384 Bytes */
+  HT6022BX_32KB  = 0x00008000,//0x04 /*!< 32768 Bytes */
+  HT6022BX_64KB  = 0x00010000,//0x04 /*!< 65536 Bytes */
+  HT6022BX_128KB = 0x00020000,//0x04 /*!< 131072 Bytes */
+  HT6022BX_256KB = 0x00040000,//0x04 /*!< 262144 Bytes */
+  HT6022BX_512KB = 0x00080000,//0x04 /*!< 524288 Bytes */
+  HT6022BX_1MB   = 0x00100000 //0x04 /*!< 1048576 Bytes */
 }HT6022BX_DataSizeTypeDef;
 #define  IS_HT6022BX_DATASIZE(SIZE) (((SIZE) == HT6022BX_1KB)  ||\
                                    ((SIZE) == HT6022BX_2KB)  ||\
@@ -222,6 +223,14 @@ typedef enum
     HT6022BX_5V    = 0x02, /*!< -2.5V  to 2.5V  */
     HT6022BX_2V    = 0x05, /*!< -1V    to 1V    */
     HT6022BX_1V    = 0x0A  /*!< -500mv to 500mv */
+    //5V/DIV
+    //2V/DIV
+    //1V/DIV
+    //500mV/DIV
+    //200mV/DIV
+    //100mV/DIV
+    //50mV/DIV
+    //20mV/DIV
 }HT6022BX_IRTypeDef;
 #define  IS_HT6022BX_IR(IR) (((IR) == HT6022BX_10V) ||\
                             ((IR) == HT6022BX_5V)  ||\

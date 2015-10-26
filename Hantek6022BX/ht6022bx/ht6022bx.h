@@ -15,32 +15,29 @@ public:
     ~HT6022bx();
 private:
     QList<HT6022BX_Info>            *HantekDevices;
-    QList<HT6022BX_DeviceTypeDef>   *DeviceList;//FIXME:doubts about this!!
     HT6022BX_ControlTransfer        *IR1;
     HT6022BX_ControlTransfer        *IR2;
     HT6022BX_ControlTransfer        *SR;
     HT6022BX_ControlTransfer        *SetCalLevel;
     HT6022BX_ControlTransfer        *GetCalLevel;
     HT6022BX_ControlTransfer        *ReadControl;
-    QList<unsigned char>            *AddressList;
     UsbWrapper                      *UsbDriver;
 public:
     HT6022BX_ErrorTypeDef DeviceInit    ();
     void DeviceExit                     ();
     void printDevices                   ();
-    HT6022BX_ErrorTypeDef deviceOpen    (HT6022BX_DeviceTypeDef *Device, const unsigned int index);
-    void deviceClose                    (HT6022BX_DeviceTypeDef *Device, const unsigned int index);
-    HT6022BX_ErrorTypeDef readData      (HT6022BX_DeviceTypeDef *Device, const unsigned int index,unsigned char* CH1, unsigned char* CH2,HT6022BX_DataSizeTypeDef DataSize,unsigned int  Timeout);
-    HT6022BX_ErrorTypeDef readDataMulti (HT6022BX_DeviceTypeDef *Device, const unsigned int index,unsigned char* CH1, unsigned char* CH2,HT6022BX_DataSizeTypeDef DataSize,unsigned int  Timeout);
-    HT6022BX_ErrorTypeDef setXXX        (HT6022BX_DeviceTypeDef *Device, const unsigned int index);
-    HT6022BX_ErrorTypeDef setCalValues  (HT6022BX_DeviceTypeDef *Device, const unsigned int index,unsigned char* CalValues,HT6022BX_CVSizeTypeDef CVSize);
-    HT6022BX_ErrorTypeDef getCalValues  (HT6022BX_DeviceTypeDef *Device, const unsigned int index,unsigned char* CalValues,HT6022BX_CVSizeTypeDef CVSize);
-    HT6022BX_ErrorTypeDef setSR         (HT6022BX_DeviceTypeDef *Device, const unsigned int index,HT6022BX_SRTypeDef SR);
-    HT6022BX_ErrorTypeDef setCH1IR      (HT6022BX_DeviceTypeDef *Device, const unsigned int index,HT6022BX_IRTypeDef IR);
-    HT6022BX_ErrorTypeDef setCH2IR      (HT6022BX_DeviceTypeDef *Device, const unsigned int index,HT6022BX_IRTypeDef IR);
+    HT6022BX_ErrorTypeDef deviceOpen    (const unsigned int index);
+    void deviceClose                    (int interface);
+    HT6022BX_ErrorTypeDef readData      (const unsigned int index,unsigned char* CH1, unsigned char* CH2,HT6022BX_DataSizeTypeDef DataSize,unsigned int  Timeout);
+    HT6022BX_ErrorTypeDef readDataMulti (const unsigned int index,unsigned char* CH1, unsigned char* CH2,HT6022BX_DataSizeTypeDef DataSize,unsigned int  Timeout);
+    HT6022BX_ErrorTypeDef setXXX        (const unsigned int index);
+    HT6022BX_ErrorTypeDef setCalValues  (const unsigned int index,unsigned char* CalValues,HT6022BX_CVSizeTypeDef CVSize);
+    HT6022BX_ErrorTypeDef getCalValues  (const unsigned int index,unsigned char* CalValues,HT6022BX_CVSizeTypeDef CVSize);
+    HT6022BX_ErrorTypeDef setSR         (const unsigned int index,HT6022BX_SRTypeDef SR);
+    HT6022BX_ErrorTypeDef setCH1IR      (const unsigned int index,HT6022BX_IRTypeDef IR);
+    HT6022BX_ErrorTypeDef setCH2IR      (const unsigned int index,HT6022BX_IRTypeDef IR);
 
 signals:
-    //void deviceConnected(HT6022BX_ErrorTypeDef errorCode);
     void deviceConnected(HT6022BX_ErrorTypeDef errorCode);
     void deviceReady    (HT6022BX_ErrorTypeDef errorCode);
     void sendDevicesInfo(QList<HT6022BX_Info> *DeviceName);
